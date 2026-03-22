@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, render_template
 from flask_cors import CORS
 from web3 import Web3
 from hash_helper import generate_hash
@@ -20,6 +20,21 @@ abi              = contract_json["abi"]
 CONTRACT_ADDRESS = "0x39b8223b99690c6Dc679D77C6c90650C90d6d1D3"
 contract         = w3.eth.contract(address=CONTRACT_ADDRESS, abi=abi)
 hr_account       = w3.eth.accounts[0]
+
+
+# PAGE ROUTES
+@app.route("/")
+@app.route("/hr")
+def hr_page():
+    return render_template("hr.html")
+
+@app.route("/employee")
+def employee_page():
+    return render_template("employee.html")
+
+@app.route("/verify")
+def verify_page():
+    return render_template("verify.html")
 
 
 # API 1 — Generate Payslip
@@ -86,8 +101,8 @@ def get_payslip(emp_id):
 
 
 # API 3 — Verify Payslip
-@app.route("/verify", methods=["POST"])
-def verify():
+@app.route("/verify-check", methods=["POST"])
+def verify_check():
     data       = request.json
     emp_id     = int(data["employeeId"])
     hash_value = data["payslipHash"]

@@ -180,9 +180,9 @@
   <div class="navbar">
     <div class="logo">Pay<span>Chain</span></div>
     <nav>
-      <a href="hr.html">HR Dashboard</a>
-      <a href="employee.html" class="active">Employee Portal</a>
-      <a href="verify.html">Verify Payslip</a>
+      <a href="/hr">HR Dashboard</a>
+      <a href="/employee" class="active">Employee Portal</a>
+      <a href="/verify">Verify Payslip</a>
     </nav>
   </div>
 
@@ -201,7 +201,7 @@
           Search
         </button>
       </div>
-      <p id="loading">⏳ Fetching from blockchain...</p>
+      <p id="loading">&#9203; Fetching from blockchain...</p>
       <p id="no-result">No payslips found for this ID.</p>
     </div>
 
@@ -219,15 +219,13 @@
       document.getElementById("no-result").style.display = "none";
 
       try {
-        const response = await fetch(
-          `http://127.0.0.1:5000/payslip/${empId}`
-        );
+        const response = await fetch(`/payslip/${empId}`);
         const res = await response.json();
         document.getElementById("loading").style.display = "none";
 
         if (res.success) {
           res.payslips.forEach((p, i) => {
-            const gross = p.basicSalary + p.hra + p.da + p.allowances;
+            const gross      = p.basicSalary + p.hra + p.da + p.allowances;
             const deductions = p.pf + p.esi + p.tds;
             results.innerHTML += `
               <div class="payslip-card">
@@ -250,6 +248,10 @@
                       <div class="ivalue">${p.company}</div>
                     </div>
                     <div class="info-item">
+                      <div class="ilabel">Designation</div>
+                      <div class="ivalue">${p.designation}</div>
+                    </div>
+                    <div class="info-item">
                       <div class="ilabel">Pay Period</div>
                       <div class="ivalue">${p.month} / ${p.year}</div>
                     </div>
@@ -260,36 +262,36 @@
                       <th>Deductions</th><th>Amount</th>
                     </tr>
                     <tr>
-                      <td>Basic Salary</td><td>&#8377;${p.basicSalary}</td>
-                      <td>Provident Fund</td><td>&#8377;${p.pf}</td>
+                      <td>Basic Salary</td><td>Rs.${p.basicSalary}</td>
+                      <td>Provident Fund</td><td>Rs.${p.pf}</td>
                     </tr>
                     <tr>
-                      <td>HRA</td><td>&#8377;${p.hra}</td>
-                      <td>ESI</td><td>&#8377;${p.esi}</td>
+                      <td>HRA</td><td>Rs.${p.hra}</td>
+                      <td>ESI</td><td>Rs.${p.esi}</td>
                     </tr>
                     <tr>
-                      <td>DA</td><td>&#8377;${p.da}</td>
-                      <td>TDS</td><td>&#8377;${p.tds}</td>
+                      <td>DA</td><td>Rs.${p.da}</td>
+                      <td>TDS</td><td>Rs.${p.tds}</td>
                     </tr>
                     <tr>
-                      <td>Allowances</td><td>&#8377;${p.allowances}</td>
+                      <td>Allowances</td><td>Rs.${p.allowances}</td>
                       <td>Total Deductions</td>
-                      <td><strong>&#8377;${deductions}</strong></td>
+                      <td><strong>Rs.${deductions}</strong></td>
                     </tr>
                     <tr>
                       <td><strong>Gross Earnings</strong></td>
-                      <td><strong>&#8377;${gross}</strong></td>
+                      <td><strong>Rs.${gross}</strong></td>
                       <td></td><td></td>
                     </tr>
                   </table>
                 </div>
                 <div class="net-pay-row">
                   <span>Total Net Payable</span>
-                  <span>&#8377;${p.netPay}</span>
+                  <span>Rs.${p.netPay}</span>
                 </div>
                 <div class="download-row">
                   <a class="download-btn"
-                    href="http://127.0.0.1:5000/download/${p.employeeId}/${p.payslipHash}"
+                    href="/download/${p.employeeId}/${p.payslipHash}"
                     target="_blank">
                     &#11015; Download Payslip PDF
                   </a>
