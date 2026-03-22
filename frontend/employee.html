@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PayChain — Employee Portal</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #f4f6f9;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: #333;
+    }
+    .navbar {
+      background: #1a237e;
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .navbar .logo { color: #fff; font-size: 20px; font-weight: 700; }
+    .navbar .logo span { color: #90caf9; }
+    .navbar nav a {
+      color: #90caf9;
+      text-decoration: none;
+      margin-left: 30px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .navbar nav a:hover { color: #fff; }
+    .navbar nav a.active {
+      color: #fff;
+      border-bottom: 2px solid #fff;
+      padding-bottom: 4px;
+    }
+    .page-header {
+      background: #1a237e;
+      color: #fff;
+      padding: 30px 40px;
+    }
+    .page-header h1 { font-size: 24px; font-weight: 600; }
+    .page-header p  { font-size: 13px; color: #90caf9; margin-top: 4px; }
+    .main { padding: 30px 40px; max-width: 900px; margin: 0 auto; }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1a237e;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e8eaf6;
+    }
+    .search-row {
+      display: flex;
+      gap: 12px;
+    }
+    .search-row input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      color: #333;
+      background: #fafafa;
+    }
+    .search-row input:focus {
+      outline: none;
+      border-color: #1a237e;
+      background: #fff;
+    }
+    .btn-primary {
+      background: #1a237e;
+      color: #fff;
+      border: none;
+      padding: 10px 28px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-primary:hover { background: #283593; }
+    .payslip-card {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .payslip-header {
+      background: #1a237e;
+      color: #fff;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .payslip-header h3 { font-size: 15px; font-weight: 600; }
+    .payslip-header span { font-size: 13px; color: #90caf9; }
+    .payslip-body { padding: 20px 24px; }
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .info-item .ilabel { font-size: 12px; color: #888; margin-bottom: 2px; }
+    .info-item .ivalue { font-size: 14px; color: #333; font-weight: 500; }
+    .salary-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .salary-table th {
+      background: #e8eaf6;
+      color: #1a237e;
+      padding: 8px 12px;
+      text-align: left;
+      font-weight: 600;
+    }
+    .salary-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .salary-table tr:last-child td { border-bottom: none; }
+    .net-pay-row {
+      background: #1a237e;
+      color: #fff;
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .net-pay-row span:first-child { font-size: 14px; font-weight: 600; }
+    .net-pay-row span:last-child  { font-size: 18px; font-weight: 700; }
+    .download-row {
+      padding: 12px 24px;
+      background: #f9f9f9;
+      border-top: 1px solid #eee;
+    }
+    .download-btn {
+      display: inline-block;
+      background: #1a237e;
+      color: #fff;
+      padding: 8px 20px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .download-btn:hover { background: #283593; }
+    .hash-row {
+      padding: 12px 24px;
+      background: #f9f9f9;
+      font-size: 11px;
+      color: #888;
+      word-break: break-all;
+      border-top: 1px solid #eee;
+    }
+    .footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 12px;
+      color: #aaa;
+    }
+    #loading   { color: #1a237e; font-size: 14px; display: none; margin-top: 12px; }
+    #no-result { color: #c62828; font-size: 14px; display: none; margin-top: 12px; }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <div class="logo">Pay<span>Chain</span></div>
+    <nav>
+      <a href="hr.html">HR Dashboard</a>
+      <a href="employee.html" class="active">Employee Portal</a>
+      <a href="verify.html">Verify Payslip</a>
+    </nav>
+  </div>
+
+  <div class="page-header">
+    <h1>Employee Portal</h1>
+    <p>View and download your blockchain verified payslips</p>
+  </div>
+
+  <div class="main">
+    <div class="card">
+      <div class="card-title">Search Payslips</div>
+      <div class="search-row">
+        <input type="number" id="empId"
+          placeholder="Enter your Employee ID"/>
+        <button class="btn-primary" onclick="getPayslips()">
+          Search
+        </button>
+      </div>
+      <p id="loading">⏳ Fetching from blockchain...</p>
+      <p id="no-result">No payslips found for this ID.</p>
+    </div>
+
+    <div id="results"></div>
+  </div>
+
+  <div class="footer">PayChain — Blockchain Payslip Verification System</div>
+
+  <script>
+    async function getPayslips() {
+      const empId   = document.getElementById("empId").value;
+      const results = document.getElementById("results");
+      results.innerHTML = "";
+      document.getElementById("loading").style.display   = "block";
+      document.getElementById("no-result").style.display = "none";
+
+      try {
+        const response = await fetch(
+          `http://127.0.0.1:5000/payslip/${empId}`
+        );
+        const res = await response.json();
+        document.getElementById("loading").style.display = "none";
+
+        if (res.success) {
+          res.payslips.forEach((p, i) => {
+            const gross = p.basicSalary + p.hra + p.da + p.allowances;
+            const deductions = p.pf + p.esi + p.tds;
+            results.innerHTML += `
+              <div class="payslip-card">
+                <div class="payslip-header">
+                  <h3>Payslip — ${p.month} / ${p.year}</h3>
+                  <span>${p.company}</span>
+                </div>
+                <div class="payslip-body">
+                  <div class="info-grid">
+                    <div class="info-item">
+                      <div class="ilabel">Employee ID</div>
+                      <div class="ivalue">${p.employeeId}</div>
+                    </div>
+                    <div class="info-item">
+                      <div class="ilabel">Employee Name</div>
+                      <div class="ivalue">${p.name}</div>
+                    </div>
+                    <div class="info-item">
+                      <div class="ilabel">Company</div>
+                      <div class="ivalue">${p.company}</div>
+                    </div>
+                    <div class="info-item">
+                      <div class="ilabel">Pay Period</div>
+                      <div class="ivalue">${p.month} / ${p.year}</div>
+                    </div>
+                  </div>
+                  <table class="salary-table">
+                    <tr>
+                      <th>Earnings</th><th>Amount</th>
+                      <th>Deductions</th><th>Amount</th>
+                    </tr>
+                    <tr>
+                      <td>Basic Salary</td><td>&#8377;${p.basicSalary}</td>
+                      <td>Provident Fund</td><td>&#8377;${p.pf}</td>
+                    </tr>
+                    <tr>
+                      <td>HRA</td><td>&#8377;${p.hra}</td>
+                      <td>ESI</td><td>&#8377;${p.esi}</td>
+                    </tr>
+                    <tr>
+                      <td>DA</td><td>&#8377;${p.da}</td>
+                      <td>TDS</td><td>&#8377;${p.tds}</td>
+                    </tr>
+                    <tr>
+                      <td>Allowances</td><td>&#8377;${p.allowances}</td>
+                      <td>Total Deductions</td>
+                      <td><strong>&#8377;${deductions}</strong></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Gross Earnings</strong></td>
+                      <td><strong>&#8377;${gross}</strong></td>
+                      <td></td><td></td>
+                    </tr>
+                  </table>
+                </div>
+                <div class="net-pay-row">
+                  <span>Total Net Payable</span>
+                  <span>&#8377;${p.netPay}</span>
+                </div>
+                <div class="download-row">
+                  <a class="download-btn"
+                    href="http://127.0.0.1:5000/download/${p.employeeId}/${p.payslipHash}"
+                    target="_blank">
+                    &#11015; Download Payslip PDF
+                  </a>
+                </div>
+                <div class="hash-row">
+                  Blockchain TX Hash: ${p.txHash}<br/>
+                  Payslip Hash: ${p.payslipHash}
+                </div>
+              </div>
+            `;
+          });
+        } else {
+          document.getElementById("no-result").style.display = "block";
+        }
+      } catch(err) {
+        document.getElementById("loading").style.display   = "none";
+        document.getElementById("no-result").style.display = "block";
+      }
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PayChain — Verify Payslip</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #f4f6f9;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: #333;
+    }
+    .navbar {
+      background: #1a237e;
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .navbar .logo { color: #fff; font-size: 20px; font-weight: 700; }
+    .navbar .logo span { color: #90caf9; }
+    .navbar nav a {
+      color: #90caf9;
+      text-decoration: none;
+      margin-left: 30px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .navbar nav a:hover { color: #fff; }
+    .navbar nav a.active {
+      color: #fff;
+      border-bottom: 2px solid #fff;
+      padding-bottom: 4px;
+    }
+    .page-header {
+      background: #1a237e;
+      color: #fff;
+      padding: 30px 40px;
+    }
+    .page-header h1 { font-size: 24px; font-weight: 600; }
+    .page-header p  { font-size: 13px; color: #90caf9; margin-top: 4px; }
+    .main { padding: 30px 40px; max-width: 900px; margin: 0 auto; }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1a237e;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e8eaf6;
+    }
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      color: #333;
+      background: #fafafa;
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: #1a237e;
+      background: #fff;
+    }
+    .btn-primary {
+      background: #1a237e;
+      color: #fff;
+      border: none;
+      padding: 14px 40px;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      letter-spacing: 0.5px;
+    }
+    .btn-primary:hover { background: #283593; }
+
+    /* GENUINE RESULT */
+    .result-genuine {
+      display: none;
+      border: 1px solid #a5d6a7;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 20px;
+    }
+    .genuine-header {
+      background: #2e7d32;
+      color: #fff;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .genuine-header h2 { font-size: 18px; font-weight: 700; }
+    .genuine-header p  { font-size: 13px; opacity: 0.85; margin-top: 2px; }
+    .genuine-body { padding: 20px 24px; background: #fff; }
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .info-item .ilabel { font-size: 12px; color: #888; margin-bottom: 2px; }
+    .info-item .ivalue { font-size: 14px; color: #333; font-weight: 500; }
+    .salary-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-bottom: 0;
+    }
+    .salary-table th {
+      background: #e8eaf6;
+      color: #1a237e;
+      padding: 8px 12px;
+      text-align: left;
+      font-weight: 600;
+    }
+    .salary-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .net-pay-row {
+      background: #1a237e;
+      color: #fff;
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .net-pay-row span:first-child { font-size: 14px; font-weight: 600; }
+    .net-pay-row span:last-child  { font-size: 20px; font-weight: 700; }
+    .blockchain-row {
+      padding: 12px 24px;
+      background: #f9f9f9;
+      font-size: 11px;
+      color: #888;
+      word-break: break-all;
+      border-top: 1px solid #eee;
+    }
+
+    /* FAKE RESULT */
+    .result-fake {
+      display: none;
+      border: 1px solid #ef9a9a;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 20px;
+    }
+    .fake-header {
+      background: #c62828;
+      color: #fff;
+      padding: 20px 24px;
+    }
+    .fake-header h2 { font-size: 20px; font-weight: 700; }
+    .fake-header p  { font-size: 13px; opacity: 0.85; margin-top: 6px; }
+    .fake-body {
+      padding: 20px 24px;
+      background: #fff;
+      font-size: 13px;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    /* LOADING */
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 20px;
+      color: #1a237e;
+      font-size: 14px;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 12px;
+      color: #aaa;
+    }
+
+    /* INFO BOX */
+    .info-box {
+      background: #e8eaf6;
+      border-left: 4px solid #1a237e;
+      padding: 14px 18px;
+      border-radius: 4px;
+      font-size: 13px;
+      color: #333;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <div class="logo">Pay<span>Chain</span></div>
+    <nav>
+      <a href="hr.html">HR Dashboard</a>
+      <a href="employee.html">Employee Portal</a>
+      <a href="verify.html" class="active">Verify Payslip</a>
+    </nav>
+  </div>
+
+  <div class="page-header">
+    <h1>Verify Payslip</h1>
+    <p>Instantly verify if a payslip is genuine or tampered</p>
+  </div>
+
+  <div class="main">
+    <div class="card">
+      <div class="info-box">
+        ℹ️ Enter the Employee ID and Payslip Hash printed on the payslip.
+        The system will check the blockchain and confirm if the document
+        is genuine or has been tampered with.
+      </div>
+
+      <div class="card-title">Verification Details</div>
+
+      <div class="form-group">
+        <label>Employee ID</label>
+        <input type="number" id="empId" placeholder="e.g. 101"/>
+      </div>
+      <div class="form-group">
+        <label>Payslip Hash</label>
+        <input type="text" id="hashValue"
+          placeholder="Paste the payslip hash here..."/>
+      </div>
+
+      <button class="btn-primary" onclick="verifyPayslip()">
+        Verify Payslip on Blockchain
+      </button>
+
+      <div class="loading" id="loading">
+        ⏳ Checking blockchain record...
+      </div>
+
+      <!-- GENUINE RESULT -->
+      <div class="result-genuine" id="result-genuine">
+        <div class="genuine-header">
+          <div>
+            <h2>✅ GENUINE — Verified on Blockchain</h2>
+            <p>This payslip is authentic and has not been tampered with</p>
+          </div>
+        </div>
+        <div class="genuine-body">
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="ilabel">Employee ID</div>
+              <div class="ivalue" id="r-empid"></div>
+            </div>
+            <div class="info-item">
+              <div class="ilabel">Employee Name</div>
+              <div class="ivalue" id="r-name"></div>
+            </div>
+            <div class="info-item">
+              <div class="ilabel">Company</div>
+              <div class="ivalue" id="r-company"></div>
+            </div>
+            <div class="info-item">
+              <div class="ilabel">Pay Period</div>
+              <div class="ivalue" id="r-period"></div>
+            </div>
+          </div>
+          <table class="salary-table">
+            <tr>
+              <th>Earnings</th><th>Amount</th>
+              <th>Deductions</th><th>Amount</th>
+            </tr>
+            <tr>
+              <td>Basic Salary</td><td id="r-basic"></td>
+              <td>Provident Fund</td><td id="r-pf"></td>
+            </tr>
+            <tr>
+              <td>HRA</td><td id="r-hra"></td>
+              <td>ESI</td><td id="r-esi"></td>
+            </tr>
+            <tr>
+              <td>DA</td><td id="r-da"></td>
+              <td>TDS</td><td id="r-tds"></td>
+            </tr>
+            <tr>
+              <td>Allowances</td><td id="r-allow"></td>
+              <td></td><td></td>
+            </tr>
+          </table>
+        </div>
+        <div class="net-pay-row">
+          <span>Total Net Payable</span>
+          <span id="r-netpay"></span>
+        </div>
+        <div class="blockchain-row">
+          Blockchain TX Hash: <span id="r-txhash"></span><br/>
+          Payslip Hash: <span id="r-hash"></span>
+        </div>
+      </div>
+
+      <!-- FAKE RESULT -->
+      <div class="result-fake" id="result-fake">
+        <div class="fake-header">
+          <h2>❌ FAKE — Verification Failed</h2>
+          <p>This payslip does not match any record on blockchain</p>
+        </div>
+        <div class="fake-body">
+          The payslip hash you entered does not match any verified record
+          on the blockchain. This document may have been tampered with or
+          is not issued through the PayChain system. Do not accept this
+          payslip as valid proof of income.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="footer">PayChain — Blockchain Payslip Verification System</div>
+
+  <script>
+    async function verifyPayslip() {
+      const empId     = document.getElementById("empId").value;
+      const hashValue = document.getElementById("hashValue").value;
+
+      document.getElementById("result-genuine").style.display = "none";
+      document.getElementById("result-fake").style.display    = "none";
+      document.getElementById("loading").style.display        = "block";
+
+      try {
+        const response = await fetch("http://127.0.0.1:5000/verify", {
+          method:  "POST",
+          headers: { "Content-Type": "application/json" },
+          body:    JSON.stringify({
+            employeeId:  empId,
+            payslipHash: hashValue
+          })
+        });
+        const res = await response.json();
+        document.getElementById("loading").style.display = "none";
+
+        if (res.genuine) {
+          const p = res.payslip;
+          document.getElementById("r-empid").textContent   = p.employeeId;
+          document.getElementById("r-name").textContent    = p.name;
+          document.getElementById("r-company").textContent = p.company;
+          document.getElementById("r-period").textContent  = p.month + " / " + p.year;
+          document.getElementById("r-basic").textContent   = "₹" + p.basicSalary;
+          document.getElementById("r-hra").textContent     = "₹" + p.hra;
+          document.getElementById("r-da").textContent      = "₹" + p.da;
+          document.getElementById("r-allow").textContent   = "₹" + p.allowances;
+          document.getElementById("r-pf").textContent      = "₹" + p.pf;
+          document.getElementById("r-esi").textContent     = "₹" + p.esi;
+          document.getElementById("r-tds").textContent     = "₹" + p.tds;
+          document.getElementById("r-netpay").textContent  = "₹" + p.netPay;
+          document.getElementById("r-txhash").textContent  = p.txHash;
+          document.getElementById("r-hash").textContent    = p.payslipHash;
+          document.getElementById("result-genuine").style.display = "block";
+        } else {
+          document.getElementById("result-fake").style.display = "block";
+        }
+      } catch(err) {
+        document.getElementById("loading").style.display    = "none";
+        document.getElementById("result-fake").style.display = "block";
+      }
+    }
+  </script>
+
+</body>
+</html>
+
+

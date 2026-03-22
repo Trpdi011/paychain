@@ -1,0 +1,5 @@
+Contract Address:
+0x39b8223b99690c6Dc679D77C6c90650C90d6d1D3
+
+ABI File Location:
+build/contracts/PayslipContract.json
