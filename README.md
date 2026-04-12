@@ -36,7 +36,7 @@ calling the company directly. LedgerShield solves this.
 
 ## Solution
 
-LedgerShield generates a **SHA-256 cryptographic hash** of 
+Paychain generates a **SHA-256 cryptographic hash** of 
 every payslip and locks it permanently on the **Ganache 
 blockchain** using a **Solidity smart contract**. 
 
