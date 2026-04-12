@@ -17,7 +17,7 @@ with open("../build/contracts/PayslipContract.json") as f:
     contract_json = json.load(f)
 
 abi              = contract_json["abi"]
-CONTRACT_ADDRESS = "0x39b8223b99690c6Dc679D77C6c90650C90d6d1D3"
+CONTRACT_ADDRESS = "0xCb9e48cc221B62d225E806c7b275c60CE2433B7A"
 contract         = w3.eth.contract(address=CONTRACT_ADDRESS, abi=abi)
 hr_account       = w3.eth.accounts[0]
 
